@@ -8,7 +8,6 @@ import hashlib
 from collections import OrderedDict
 
 from django.db import models
-from django.utils.translation import ugettext_lazy as _
 from django.utils.functional import curry
 from django.contrib.contenttypes.models import ContentType
 from django.utils.safestring import mark_safe
@@ -201,21 +200,14 @@ class MetadataBase(type):
         except KeyError:
             raise Exception('Metadata backend "%s" is not installed.' % backend_name)
 
-        #new_class._meta._add_backend(PathBackend)
-        #new_class._meta._add_backend(ModelInstanceBackend)
-        #new_class._meta._add_backend(ModelBackend)
-        #new_class._meta._add_backend(ViewBackend)
-
         registry[name] = new_class
 
         return new_class
-
 
     # TODO: Move this function out of the way (subclasses will want to define their own attributes)
     def _get_formatted_data(cls, path, context=None, site=None, language=None):
         """ Return an object to conveniently access the appropriate values. """
         return FormattedMetadata(cls(), cls._get_instances(path, context, site, language), path, site, language)
-
 
     # TODO: Move this function out of the way (subclasses will want to define their own attributes)
     def _get_instances(cls, path, context=None, site=None, language=None):
@@ -358,5 +350,3 @@ def register_signals():
             for model in metadata_class._meta.seo_models:
                 models.signals.post_save.connect(update_callback, sender=model, weak=False)
                 models.signals.pre_delete.connect(delete_callback, sender=model, weak=False)
-
-

@@ -333,7 +333,6 @@ class ModelBackend(MetadataBackend):
             raise Exception("Metadata backend 'modelinstance' must be installed in order to use 'model' backend")
 
 
-
 def _resolve(value, model_instance=None, context=None):
     """ Resolves any template references in the given value.
     """
