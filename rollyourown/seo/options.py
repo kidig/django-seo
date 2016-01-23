@@ -8,6 +8,7 @@ except ImportError:
     from django.utils.text import camel_case_to_spaces as get_verbose_name
 from django.db import models
 
+
 class Options(object):
     def __init__(self, meta, help_text=None):
         self.use_sites = meta.pop('use_sites', False)
@@ -58,12 +59,13 @@ class Options(object):
 
         # 0. Abstract base model with common fields
         base_meta = type('Meta', (), self.original_meta)
+
         class BaseMeta(base_meta):
             abstract = True
             app_label = 'seo'
         fields['Meta'] = BaseMeta
         # Do we need this?
-        fields['__module__'] = __name__ #attrs['__module__']
+        fields['__module__'] = __name__  # attrs['__module__']
         self.MetadataBaseModel = type('%sBase' % self.name, (models.Model,), fields)
 
     def _add_backend(self, backend):
@@ -71,7 +73,7 @@ class Options(object):
         md_type = backend.verbose_name
         base = backend().get_model(self)
         # TODO: Rename this field
-        new_md_attrs = {'_metadata': self.metadata, '__module__': __name__ }
+        new_md_attrs = {'_metadata': self.metadata, '__module__': __name__}
 
         new_md_meta = {}
         new_md_meta['verbose_name'] = '%s (%s)' % (self.verbose_name, md_type)
@@ -79,7 +81,7 @@ class Options(object):
         new_md_meta['unique_together'] = base._meta.unique_together
         new_md_attrs['Meta'] = type("Meta", (), new_md_meta)
         new_md_attrs['_metadata_type'] = backend.name
-        model = type("%s%s"%(self.name,"".join(md_type.split())), (base, self.MetadataBaseModel), new_md_attrs.copy())
+        model = type("%s%s" % (self.name, "".join(md_type.split())), (base, self.MetadataBaseModel), new_md_attrs.copy())
         self.models[backend.name] = model
         # This is a little dangerous, but because we set __module__ to __name__, the model needs tobe accessible here
         globals()[model.__name__] = model
@@ -97,7 +99,5 @@ class Options(object):
                 app = models.get_app(model_name)
                 if app:
                     seo_models.extend(models.get_models(app))
-    
+
         self.seo_models = seo_models
-
-
